@@ -104,6 +104,9 @@ if( !function_exists('homey_register') ) {
 
         $usermane          = trim( sanitize_text_field( wp_kses( $_POST['username'], $allowed_html ) ));
         $email             = trim( sanitize_text_field( wp_kses( $_POST['useremail'], $allowed_html ) ));
+        $first_name        = trim( sanitize_text_field( wp_kses( $_POST['userfirstname'], $allowed_html ) ));
+        $last_name         = trim( sanitize_text_field( wp_kses( $_POST['userlastname'], $allowed_html ) ));
+        $phone             = trim( sanitize_text_field( wp_kses( $_POST['phone'], $allowed_html ) ));
         $term_condition    = wp_kses( $_POST['term_condition'], $allowed_html );
         $enable_password = homey_option('enable_password');
         $response = isset($_POST["g-recaptcha-response"])?$_POST["g-recaptcha-response"]:'';
@@ -141,6 +144,16 @@ if( !function_exists('homey_register') ) {
         }
         if( empty( $email ) ) {
             echo json_encode( array( 'success' => false, 'msg' => esc_html__('The email field is empty.', 'homey-login-register') ) );
+            wp_die();
+        }
+
+        if( empty( $first_name ) ) {
+            echo json_encode( array( 'success' => false, 'msg' => esc_html__('The first name field is empty.', 'homey-login-register') ) );
+            wp_die();
+        }
+
+        if( empty( $last_name ) ) {
+            echo json_encode( array( 'success' => false, 'msg' => esc_html__('The last name field is empty.', 'homey-login-register') ) );
             wp_die();
         }
 
@@ -190,6 +203,52 @@ if( !function_exists('homey_register') ) {
             $user_password = wp_generate_password( $length=12, $include_standard_special_chars=false );
         }
         $user_id = wp_create_user( $usermane, $user_password, $email );
+
+        // if ( !empty( $_POST['firstname'] ) ) {
+        //     $firstname = sanitize_text_field( $_POST['firstname'] );
+        //     update_user_meta( $user_id, 'first_name', $firstname );
+        // } else {
+        //     delete_user_meta( $user_id, 'first_name' );
+        // }
+
+        if ( !empty($first_name) ) {
+            update_user_meta( $user_id, 'first_name', $first_name );
+        } 
+
+        if ( !empty($first_name) ) {
+            update_user_meta( $user_id, 'last_name', $last_name );
+        } 
+
+        if ( !empty($phone) ) {
+            update_user_meta( $user_id, 'phone', $phone );
+        } 
+
+        // if ( !empty( $_POST['em_phone'] ) ) {
+        //     $em_phone = sanitize_text_field( $_POST['em_phone'] );
+        //
+        //     if(houzez_validate_phone_number($em_phone)) {
+        //         update_user_meta( $userID, $prefix.'em_phone', $em_phone );
+        //
+        //     } else {
+        //         echo json_encode( array( 'success' => false, 'msg' => esc_html__('Invalid phone number.', 'homey') ) );
+        //         wp_die();
+        //     }
+        // } else {
+        //     delete_user_meta( $userID, $prefix.'em_phone' );
+        // }
+
+        // if ( !empty( $_POST['phone'] ) ) {
+        //     $phone = sanitize_text_field( $_POST['phone'] );
+        //
+        //     // if(houzez_validate_phone_number($phone)) {
+        //         // update_user_meta( $userID, 'phone', $phone );
+        //         update_user_meta( $userID, 'phone', 555555 );
+        //
+        //     // } else {
+        //         // echo json_encode( array( 'success' => false, 'msg' => esc_html__('Invalid phone number.', 'homey') ) );
+        //         // wp_die();
+        //     // }
+        // } 
 
         if ( is_wp_error($user_id) ) {
             echo json_encode( array( 'success' => false, 'msg' => $user_id ) );
