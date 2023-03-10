@@ -215,7 +215,7 @@ if( !function_exists('homey_register') ) {
             update_user_meta( $user_id, 'first_name', $first_name );
         } 
 
-        if ( !empty($first_name) ) {
+        if ( !empty($last_name) ) {
             update_user_meta( $user_id, 'last_name', $last_name );
         } 
 
